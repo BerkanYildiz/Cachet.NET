@@ -6,7 +6,8 @@ C# client library for the open-source Cachet status page system.
 ```csharp
 using Cachet.NET;
 
-var Cachet = new Cachet("https://demo.cachethq.io/api/v1/", "aegrHARGrgsfhryae");
+var Cachet = new Cachet("https://demo.cachethq.io/api/v1/", "aegrHARGrgsfhryae"); // Token
+var Cachet = new Cachet("https://demo.cachethq.io/api/v1/", "demo@cachethq.io", "password"); // Account
 
 var ComponentsResult = Cachet.GetComponents();
 var ComponentResult  = await Cachet.GetComponentsAsync();
