@@ -10,7 +10,7 @@ var Cachet = new Cachet("https://demo.cachethq.io/api/v1/", "aegrHARGrgsfhryae")
 var Cachet = new Cachet("https://demo.cachethq.io/api/v1/", "demo@cachethq.io", "password"); // Account
 
 var ComponentsResult = Cachet.GetComponents();
-var ComponentResult  = await Cachet.GetComponentsAsync();
+var ComponentsResult = await Cachet.GetComponentsAsync();
 
 foreach (var Component in ComponentsResult.Components)
 {
@@ -22,7 +22,7 @@ foreach (var Component in ComponentsResult.Components)
 }
 
 bool isPingValid  = Cachet.Ping();
-bool isPingValid  = async Cachet.PingAsync();
+bool isPingValid  = await Cachet.PingAsync();
 
 string CachetVer  = Cachet.GetVersion();
 string CachetVer  = await Cachet.GetVersion();
