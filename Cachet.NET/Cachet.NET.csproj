@@ -49,8 +49,12 @@
     <Compile Include="Responses\ComponentResponse.cs" />
     <Compile Include="Responses\ComponentGroupsResponse.cs" />
     <Compile Include="Responses\ComponentsResponse.cs" />
+    <Compile Include="Responses\IncidentResponse.cs" />
+    <Compile Include="Responses\IncidentsResponse.cs" />
     <Compile Include="Responses\Objects\ComponentGroupObject.cs" />
     <Compile Include="Responses\Objects\ComponentObject.cs" />
+    <Compile Include="Responses\Objects\IncidentObject.cs" />
+    <Compile Include="Responses\Objects\IncidentStatus.cs" />
     <Compile Include="Responses\VersionResponse.cs" />
     <Compile Include="Responses\PingResponse.cs" />
   </ItemGroup>

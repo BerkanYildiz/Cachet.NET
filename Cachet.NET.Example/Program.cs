@@ -10,7 +10,7 @@
         /// </summary>
         internal static void Main()
         {
-            var Cachet = new Cachet("https://status.gobelinland.fr/api/v1/", "");
+            var Cachet = new Cachet("https://demo.cachethq.io/api/v1/", "");
 
             Console.WriteLine("Ping : " + Cachet.Ping() + ".");
 
@@ -50,6 +50,16 @@
             foreach (var Group in CompoGr.Groups)
             {
                 Console.WriteLine(" - " + Group.Name);
+            }
+            Console.WriteLine();
+
+            var incidents = Cachet.GetIncidents();
+
+            Console.WriteLine("Incidents : ");
+
+            foreach (var incident in incidents.Incidents)
+            {
+                Console.WriteLine(" - " + incident.Name);
             }
 
             Console.ReadKey(false);
