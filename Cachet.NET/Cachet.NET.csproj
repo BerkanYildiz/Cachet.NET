@@ -35,6 +35,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="RestSharp, Version=106.6.7.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.106.6.7\lib\net452\RestSharp.dll</HintPath>
     </Reference>
@@ -57,6 +58,7 @@
     <Compile Include="Responses\Metas\Links.cs" />
     <Compile Include="Responses\Metas\Pagination.cs" />
     <Compile Include="Responses\Metas\Meta.cs" />
+    <Compile Include="Responses\MetricPointResponse.cs" />
     <Compile Include="Responses\Objects\SubscriptionObject.cs" />
     <Compile Include="Responses\SubscribersResponse.cs" />
     <Compile Include="Responses\MetricPointsResponse.cs" />

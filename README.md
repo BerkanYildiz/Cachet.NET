@@ -6,10 +6,10 @@ C# client library for the open-source Cachet status page system.
 ```csharp
 using Cachet.NET;
 
+var Cachet = new Cachet("https://demo.cachethq.io/api/v1/"); // Demo
 var Cachet = new Cachet("https://demo.cachethq.io/api/v1/", "aegrHARGrgsfhryae"); // Token
 var Cachet = new Cachet("https://demo.cachethq.io/api/v1/", "demo@cachethq.io", "password"); // Account
 
-var ComponentsResult = Cachet.GetComponents();
 var ComponentsResult = await Cachet.GetComponentsAsync();
 
 foreach (var Component in ComponentsResult.Components)
@@ -21,11 +21,8 @@ foreach (var Component in ComponentsResult.Components)
     // ...
 }
 
-bool isPingValid  = Cachet.Ping();
-bool isPingValid  = await Cachet.PingAsync();
-
-string CachetVer  = Cachet.GetVersion();
-string CachetVer  = await Cachet.GetVersion();
+var isPingValid = await Cachet.PingAsync();
+var CachetVersion = await Cachet.GetVersion();
 
 if (CachetVersion.Meta.OnLatest)
 {

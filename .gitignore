@@ -106,6 +106,7 @@ $tf/
 _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
+*.DotSettings
 
 # JustCode is a .NET coding add-in
 .JustCode
@@ -297,3 +298,4 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+

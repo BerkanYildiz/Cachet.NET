@@ -11,7 +11,7 @@
         /// </summary>
         private static async Task Main()
         {
-            using (var Cachet = new Cachet("https://demo.cachethq.io/api/v1/"))
+            using (var Cachet = new Cachet("https://demo.cachethq.io/api/v1/", "9yMHsdioQosnyVK4iCVR"))
             {
                 Cachet.OnDisposed += (Sender, Args) =>
                 {
@@ -29,6 +29,7 @@
                     var Metrics             = await Cachet.GetMetricAsync();
                     var FirstMetric         = await Cachet.GetMetricAsync(1);
                     var FirstMetricPoints   = await Cachet.GetMetricPointsAsync(1);
+                    var AddedMetricPoint    = await Cachet.AddMetricPointAsync(FirstMetric.Metric, new Random().Next(5000)); // This one requires to be AUTHENTICATED !
 
                     if (Version != null)
                     {
@@ -41,7 +42,7 @@
 
                     Console.WriteLine();
 
-                    if (Components != null)
+                    if (Components != null && Components.Components != null)
                     {
                         Console.WriteLine("[*] Components : ");
 
@@ -71,7 +72,7 @@
 
                     Console.WriteLine();
 
-                    if (ComponentGroups != null)
+                    if (ComponentGroups != null && ComponentGroups.Groups != null)
                     {
                         Console.WriteLine("[*] Groups : ");
 
@@ -87,7 +88,7 @@
 
                     Console.WriteLine();
 
-                    if (Incidents != null)
+                    if (Incidents != null && Incidents.Incidents != null)
                     {
                         Console.WriteLine("[*] Incidents : ");
 
@@ -103,7 +104,7 @@
 
                     Console.WriteLine();
 
-                    if (Metrics != null)
+                    if (Metrics != null && Metrics.Metrics != null)
                     {
                         Console.WriteLine("[*] Metrics : ");
 
@@ -119,7 +120,7 @@
 
                     Console.WriteLine();
 
-                    if (FirstMetric != null)
+                    if (FirstMetric != null && FirstMetric.Metric != null)
                     {
                         Console.WriteLine("[*] First Metric : ");
                         Console.WriteLine("[*]  - Name : " + FirstMetric.Metric.Name);
@@ -134,7 +135,7 @@
 
                     Console.WriteLine();
 
-                    if (FirstMetricPoints != null)
+                    if (FirstMetricPoints != null && FirstMetricPoints.Points != null)
                     {
                         Console.WriteLine("[*] First Metric Points : ");
 
@@ -146,6 +147,22 @@
                     else
                     {
                         Console.WriteLine("[*] First Metric Points : (NULL)");
+                    }
+
+                    Console.WriteLine();
+
+                    if (AddedMetricPoint != null && AddedMetricPoint.Point != null)
+                    {
+                        Console.WriteLine("[*] Added Metric Point : ");
+                        Console.WriteLine("[*]  - Id : " + AddedMetricPoint.Point.Id);
+                        Console.WriteLine("[*]  - Value : " + AddedMetricPoint.Point.Value);
+                        Console.WriteLine("[*]  - Counter : " + AddedMetricPoint.Point.Counter);
+                        Console.WriteLine("[*]  - CreatedAt : " + AddedMetricPoint.Point.CreatedAt);
+                        Console.WriteLine("[*]  - UpdatedAt : " + AddedMetricPoint.Point.UpdatedAt);
+                    }
+                    else
+                    {
+                        Console.WriteLine("[*] Added Metric Point : (NULL)");
                     }
 
                     Console.WriteLine();

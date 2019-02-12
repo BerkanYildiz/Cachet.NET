@@ -40,7 +40,7 @@
             set;
         }
 
-        public int CalculatedValue
+        public long CalculatedValue
         {
             get;
             set;

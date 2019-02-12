@@ -101,6 +101,40 @@
         }
 
         /// <summary>
+        /// Posts and gets data from the specified endpoint.
+        /// </summary>
+        /// <param name="Uri">The URI.</param>
+        /// <param name="Body">The post request body.</param>
+        private T Post<T>(string Uri, dynamic Body = null) where T : class, new()
+        {
+            var Request = new RestRequest(Uri);
+
+            if (Body != null)
+            {
+                Request.AddJsonBody((object) Body);
+            }
+
+            var Response = this.Rest.Post<T>(Request);
+
+            #if DEBUG
+
+            Log.Info(typeof(Cachet), "Response : ");
+            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
+            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
+            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
+            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
+
+            #endif
+
+            if (Response.ResponseStatus == ResponseStatus.Completed)
+            {
+                return Response.Data;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Gets data from the specified endpoint asynchronously.
         /// </summary>
         /// <param name="Uri">The URI.</param>
@@ -108,6 +142,40 @@
         {
             var Request = new RestRequest(Uri);
             var Response = await this.Rest.ExecuteGetTaskAsync<T>(Request);
+
+            #if DEBUG
+
+            Log.Info(typeof(Cachet), "Response : ");
+            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
+            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
+            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
+            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
+
+            #endif
+
+            if (Response.ResponseStatus == ResponseStatus.Completed)
+            {
+                return Response.Data;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Posts and gets data from the specified endpoint asynchronously.
+        /// </summary>
+        /// <param name="Uri">The URI.</param>
+        /// <param name="Body">The post request body.</param>
+        private async Task<T> PostAsync<T>(string Uri, dynamic Body = null) where T : class, new()
+        {
+            var Request = new RestRequest(Uri);
+
+            if (Body != null)
+            {
+                Request.AddJsonBody((object) Body);
+            }
+
+            var Response = await this.Rest.ExecutePostTaskAsync<T>(Request);
 
             #if DEBUG
 
