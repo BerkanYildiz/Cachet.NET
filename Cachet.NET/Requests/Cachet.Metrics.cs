@@ -207,5 +207,43 @@
         {
             return await this.DeleteAsync($"metrics/{MetricId}");
         }
+
+        /// <summary>
+        /// Deletes the specified metric point from the Cachet API.
+        /// </summary>
+        /// <param name="MetricPoint">The metric point.</param>
+        public bool DeleteMetricPoint(MetricPointObject MetricPoint)
+        {
+            return this.DeleteMetricPoint(MetricPoint.MetricId, MetricPoint.Id);
+        }
+
+        /// <summary>
+        /// Deletes the specified metric point from the Cachet API asynchronously.
+        /// </summary>
+        /// <param name="MetricPoint">The metric point.</param>
+        public async Task<bool> DeleteMetricPointAsync(MetricPointObject MetricPoint)
+        {
+            return await this.DeleteMetricPointAsync(MetricPoint.MetricId, MetricPoint.Id);
+        }
+
+        /// <summary>
+        /// Deletes the specified metric point from the Cachet API.
+        /// </summary>
+        /// <param name="MetricId">The metric's id.</param>
+        /// <param name="MetricPointId">The metric point's id.</param>
+        public bool DeleteMetricPoint(int MetricId, int MetricPointId)
+        {
+            return this.Delete($"metrics/{MetricId}/points/{MetricPointId}");
+        }
+
+        /// <summary>
+        /// Deletes the specified metric point from the Cachet API asynchronously.
+        /// </summary>
+        /// <param name="MetricId">The metric's id.</param>
+        /// <param name="MetricPointId">The metric point's id.</param>
+        public async Task<bool> DeleteMetricPointAsync(int MetricId, int MetricPointId)
+        {
+            return await this.DeleteAsync($"metrics/{MetricId}/points/{MetricPointId}");
+        }
     }
 }
