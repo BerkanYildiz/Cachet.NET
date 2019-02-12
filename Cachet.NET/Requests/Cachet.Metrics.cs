@@ -131,5 +131,81 @@
                 });
             }
         }
+
+        /// <summary>
+        /// Adds a new metric to the Cachet API.
+        /// </summary>
+        /// <param name="Name">The metric's name.</param>
+        /// <param name="Description">The metric's description.</param>
+        /// <param name="Suffix">The metric's points suffix.</param>
+        /// <param name="DefaultValue">The default value for points.</param>
+        /// <param name="DisplayChart">Whether to display the chart on the home page.</param>
+        public MetricResponse AddMetric(string Name, string Description, string Suffix, int DefaultValue = 0, bool DisplayChart = false)
+        {
+            return this.Post<MetricResponse>("metrics", new
+            {
+                name = Name,
+                suffix = Suffix,
+                description = Description,
+                default_value = DefaultValue,
+                display_chart = DisplayChart ? 1 : 0,
+            });
+        }
+
+        /// <summary>
+        /// Adds a new metric to the Cachet API asynchronously.
+        /// </summary>
+        /// <param name="Name">The metric's name.</param>
+        /// <param name="Description">The metric's description.</param>
+        /// <param name="Suffix">The metric's points suffix.</param>
+        /// <param name="DefaultValue">The default value for points.</param>
+        /// <param name="DisplayChart">Whether to display the chart on the home page.</param>
+        public async Task<MetricResponse> AddMetricAsync(string Name, string Description, string Suffix, int DefaultValue = 0, bool DisplayChart = false)
+        {
+            return await this.PostAsync<MetricResponse>("metrics", new
+            {
+                name = Name,
+                suffix = Suffix,
+                description = Description,
+                default_value = DefaultValue,
+                display_chart = DisplayChart ? 1 : 0,
+            });
+        }
+
+        /// <summary>
+        /// Deletes the specified metric from the Cachet API.
+        /// </summary>
+        /// <param name="Metric">The metric.</param>
+        public bool DeleteMetric(MetricObject Metric)
+        {
+            return this.DeleteMetric(Metric.Id);
+        }
+
+        /// <summary>
+        /// Deletes the specified metric from the Cachet API asynchronously.
+        /// </summary>
+        /// <param name="Metric">The metric.</param>
+        public async Task<bool> DeleteMetricAsync(MetricObject Metric)
+        {
+            return await this.DeleteMetricAsync(Metric.Id);
+        }
+
+        /// <summary>
+        /// Deletes the specified metric from the Cachet API.
+        /// </summary>
+        /// <param name="MetricId">The metric's id.</param>
+        public bool DeleteMetric(int MetricId)
+        {
+            return this.Delete($"metrics/{MetricId}");
+        }
+
+        /// <summary>
+        /// Deletes the specified metric from the Cachet API asynchronously.
+        /// </summary>
+        /// <param name="MetricId">The metric's id.</param>
+        public async Task<bool> DeleteMetricAsync(int MetricId)
+        {
+            return await this.DeleteAsync($"metrics/{MetricId}");
+        }
     }
 }

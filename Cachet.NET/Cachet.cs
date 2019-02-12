@@ -1,6 +1,7 @@
 ﻿namespace Cachet.NET
 {
     using System;
+    using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -79,8 +80,8 @@
         /// <param name="Uri">The URI.</param>
         private T Get<T>(string Uri) where T : class, new()
         {
-            var Request = new RestRequest(Uri);
-            var Response = this.Rest.Get<T>(Request);
+            var Request = new RestRequest(Uri, Method.GET);
+            var Response = this.Rest.Execute<T>(Request);
 
             #if DEBUG
 
@@ -107,14 +108,14 @@
         /// <param name="Body">The post request body.</param>
         private T Post<T>(string Uri, dynamic Body = null) where T : class, new()
         {
-            var Request = new RestRequest(Uri);
+            var Request = new RestRequest(Uri, Method.POST);
 
             if (Body != null)
             {
                 Request.AddJsonBody((object) Body);
             }
 
-            var Response = this.Rest.Post<T>(Request);
+            var Response = this.Rest.Execute<T>(Request);
 
             #if DEBUG
 
@@ -135,13 +136,40 @@
         }
 
         /// <summary>
+        /// Deletes data at the specified endpoint.
+        /// </summary>
+        /// <param name="Uri">The URI.</param>
+        private bool Delete(string Uri)
+        {
+            var Request = new RestRequest(Uri, Method.DELETE);
+            var Response = this.Rest.Execute(Request);
+
+            #if DEBUG
+
+            Log.Info(typeof(Cachet), "Response : ");
+            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
+            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
+            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
+            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
+
+            #endif
+
+            if (Response.ResponseStatus == ResponseStatus.Completed)
+            {
+                return Response.IsSuccessful;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Gets data from the specified endpoint asynchronously.
         /// </summary>
         /// <param name="Uri">The URI.</param>
         private async Task<T> GetAsync<T>(string Uri) where T : class, new()
         {
-            var Request = new RestRequest(Uri);
-            var Response = await this.Rest.ExecuteGetTaskAsync<T>(Request);
+            var Request = new RestRequest(Uri, Method.GET);
+            var Response = await this.Rest.ExecuteTaskAsync<T>(Request);
 
             #if DEBUG
 
@@ -168,14 +196,14 @@
         /// <param name="Body">The post request body.</param>
         private async Task<T> PostAsync<T>(string Uri, dynamic Body = null) where T : class, new()
         {
-            var Request = new RestRequest(Uri);
+            var Request = new RestRequest(Uri, Method.POST);
 
             if (Body != null)
             {
                 Request.AddJsonBody((object) Body);
             }
 
-            var Response = await this.Rest.ExecutePostTaskAsync<T>(Request);
+            var Response = await this.Rest.ExecuteTaskAsync<T>(Request);
 
             #if DEBUG
 
@@ -196,14 +224,78 @@
         }
 
         /// <summary>
+        /// Deletes data at the specified endpoint asynchronously.
+        /// </summary>
+        /// <param name="Uri">The URI.</param>
+        private async Task<bool> DeleteAsync(string Uri)
+        {
+            Log.Info(typeof(Cachet), "DeleteAsync()");
+
+            var Request = new RestRequest(Uri, Method.DELETE);
+            var Response = await this.Rest.ExecuteTaskAsync(Request);
+
+            #if DEBUG
+
+            Log.Info(typeof(Cachet), "Response : ");
+            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
+            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
+            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
+            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
+
+            #endif
+
+            if (Response.ResponseStatus == ResponseStatus.Completed)
+            {
+                return Response.IsSuccessful;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Gets data from the specified endpoint asynchronously.
         /// </summary>
         /// <param name="Uri">The URI.</param>
         /// <param name="Token">The cancellation token.</param>
         private async Task<T> GetAsync<T>(string Uri, CancellationToken Token) where T : class, new()
         {
-            var Request = new RestRequest(Uri);
-            var Response = await this.Rest.ExecuteGetTaskAsync<T>(Request, Token);
+            var Request = new RestRequest(Uri, Method.GET);
+            var Response = await this.Rest.ExecuteTaskAsync<T>(Request, Token);
+
+            #if DEBUG
+
+            Log.Info(typeof(Cachet), "Response : ");
+            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
+            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
+            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
+            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
+
+            #endif
+
+            if (Response.ResponseStatus == ResponseStatus.Completed)
+            {
+                return Response.Data;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Posts and gets data from the specified endpoint asynchronously.
+        /// </summary>
+        /// <param name="Uri">The URI.</param>
+        /// <param name="Token">The cancellation token.</param>
+        /// <param name="Body">The post request body.</param>
+        private async Task<T> PostAsync<T>(string Uri, CancellationToken Token, dynamic Body = null) where T : class, new()
+        {
+            var Request = new RestRequest(Uri, Method.POST);
+
+            if (Body != null)
+            {
+                Request.AddJsonBody((object)Body);
+            }
+
+            var Response = await this.Rest.ExecuteTaskAsync<T>(Request, Token);
 
             #if DEBUG
 

@@ -29,7 +29,8 @@
                     var Metrics             = await Cachet.GetMetricAsync();
                     var FirstMetric         = await Cachet.GetMetricAsync(1);
                     var FirstMetricPoints   = await Cachet.GetMetricPointsAsync(1);
-                    var AddedMetricPoint    = await Cachet.AddMetricPointAsync(FirstMetric.Metric, new Random().Next(5000)); // This one requires to be AUTHENTICATED !
+                    var AddedMetric         = await Cachet.AddMetricAsync("Name", "Description", "Suffix", 0, DisplayChart: true); // Requires to be AUTHENTICATED
+                    var AddedMetricPoint    = await Cachet.AddMetricPointAsync(AddedMetric.Metric, new Random().Next(5000)); // Requires to be AUTHENTICATED
 
                     if (Version != null)
                     {
@@ -151,18 +152,32 @@
 
                     Console.WriteLine();
 
-                    if (AddedMetricPoint != null && AddedMetricPoint.Point != null)
+                    if (AddedMetric != null && AddedMetric.Metric != null)
                     {
-                        Console.WriteLine("[*] Added Metric Point : ");
-                        Console.WriteLine("[*]  - Id : " + AddedMetricPoint.Point.Id);
-                        Console.WriteLine("[*]  - Value : " + AddedMetricPoint.Point.Value);
-                        Console.WriteLine("[*]  - Counter : " + AddedMetricPoint.Point.Counter);
-                        Console.WriteLine("[*]  - CreatedAt : " + AddedMetricPoint.Point.CreatedAt);
-                        Console.WriteLine("[*]  - UpdatedAt : " + AddedMetricPoint.Point.UpdatedAt);
-                    }
-                    else
-                    {
-                        Console.WriteLine("[*] Added Metric Point : (NULL)");
+                        if (AddedMetricPoint != null && AddedMetricPoint.Point != null)
+                        {
+                            Console.WriteLine("[*] Added Metric Point : ");
+                            Console.WriteLine("[*]  - Id : " + AddedMetricPoint.Point.Id);
+                            Console.WriteLine("[*]  - Value : " + AddedMetricPoint.Point.Value);
+                            Console.WriteLine("[*]  - Counter : " + AddedMetricPoint.Point.Counter);
+                            Console.WriteLine("[*]  - CreatedAt : " + AddedMetricPoint.Point.CreatedAt);
+                            Console.WriteLine("[*]  - UpdatedAt : " + AddedMetricPoint.Point.UpdatedAt);
+                        }
+                        else
+                        {
+                            Console.WriteLine("[*] Added Metric Point : (NULL)");
+                        }
+
+                        Console.WriteLine();
+
+                        if (await Cachet.DeleteMetricAsync(AddedMetric.Metric))
+                        {
+                            Console.WriteLine("[*] Delete Metric : " + "Successful");
+                        }
+                        else
+                        {
+                            Console.WriteLine("[*] Delete Metric : " + "Failed");
+                        }
                     }
 
                     Console.WriteLine();
