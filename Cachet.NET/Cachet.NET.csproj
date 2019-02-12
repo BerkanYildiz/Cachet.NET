@@ -49,13 +49,24 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Responses\ComponentResponse.cs" />
     <Compile Include="Responses\ComponentGroupsResponse.cs" />
+    <Compile Include="Responses\Metas\Links.cs" />
+    <Compile Include="Responses\Metas\Pagination.cs" />
+    <Compile Include="Responses\Metas\Meta.cs" />
+    <Compile Include="Responses\Objects\SubscriptionObject.cs" />
+    <Compile Include="Responses\SubscribersResponse.cs" />
+    <Compile Include="Responses\MetricPointsResponse.cs" />
+    <Compile Include="Responses\MetricResponse.cs" />
+    <Compile Include="Responses\MetricsResponse.cs" />
     <Compile Include="Responses\ComponentsResponse.cs" />
     <Compile Include="Responses\IncidentResponse.cs" />
     <Compile Include="Responses\IncidentsResponse.cs" />
     <Compile Include="Responses\Objects\ComponentGroupObject.cs" />
     <Compile Include="Responses\Objects\ComponentObject.cs" />
+    <Compile Include="Responses\Objects\SubscriberObject.cs" />
+    <Compile Include="Responses\Objects\MetricPointObject.cs" />
+    <Compile Include="Responses\Objects\MetricObject.cs" />
     <Compile Include="Responses\Objects\IncidentObject.cs" />
-    <Compile Include="Responses\Objects\IncidentStatus.cs" />
+    <Compile Include="Responses\Enums\IncidentStatus.cs" />
     <Compile Include="Responses\VersionResponse.cs" />
     <Compile Include="Responses\PingResponse.cs" />
   </ItemGroup>

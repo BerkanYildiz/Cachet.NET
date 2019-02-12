@@ -11,7 +11,7 @@
         /// </summary>
         private static async Task Main()
         {
-            using (var Cachet = new Cachet("https://demo.cachethq.io/api/v1/", ""))
+            using (var Cachet = new Cachet("https://demo.cachethq.io/api/v1/"))
             {
                 Cachet.OnDisposed += (Sender, Args) =>
                 {
@@ -22,10 +22,13 @@
 
                 if (IsPingValid)
                 {
-                    var Version         = await Cachet.GetVersionAsync();
-                    var Components      = await Cachet.GetComponentsAsync();
-                    var ComponentGroups = await Cachet.GetComponentGroupsAsync();
-                    var Incidents       = await Cachet.GetIncidentsAsync();
+                    var Version             = await Cachet.GetVersionAsync();
+                    var Components          = await Cachet.GetComponentsAsync();
+                    var ComponentGroups     = await Cachet.GetComponentGroupsAsync();
+                    var Incidents           = await Cachet.GetIncidentsAsync();
+                    var Metrics             = await Cachet.GetMetricAsync();
+                    var FirstMetric         = await Cachet.GetMetricAsync(1);
+                    var FirstMetricPoints   = await Cachet.GetMetricPointsAsync(1);
 
                     if (Version != null)
                     {
@@ -96,6 +99,53 @@
                     else
                     {
                         Console.WriteLine("[*] Incidents : (NULL)");
+                    }
+
+                    Console.WriteLine();
+
+                    if (Metrics != null)
+                    {
+                        Console.WriteLine("[*] Metrics : ");
+
+                        foreach (var Metric in Metrics.Metrics)
+                        {
+                            Console.WriteLine("[*]  - " + Metric.Name);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("[*] Metrics : (NULL)");
+                    }
+
+                    Console.WriteLine();
+
+                    if (FirstMetric != null)
+                    {
+                        Console.WriteLine("[*] First Metric : ");
+                        Console.WriteLine("[*]  - Name : " + FirstMetric.Metric.Name);
+                        Console.WriteLine("[*]  - Desc : " + FirstMetric.Metric.Description);
+                        Console.WriteLine("[*]  - Suffix : " + FirstMetric.Metric.Suffix);
+                        Console.WriteLine("[*]  - Default : " + FirstMetric.Metric.DefaultValue);
+                    }
+                    else
+                    {
+                        Console.WriteLine("[*] First Metric : (NULL)");
+                    }
+
+                    Console.WriteLine();
+
+                    if (FirstMetricPoints != null)
+                    {
+                        Console.WriteLine("[*] First Metric Points : ");
+
+                        foreach (var Point in FirstMetricPoints.Points)
+                        {
+                            Console.WriteLine("[*]  - #" + Point.Id + " -> "  + Point.CreatedAt);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("[*] First Metric Points : (NULL)");
                     }
 
                     Console.WriteLine();

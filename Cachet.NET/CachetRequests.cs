@@ -75,7 +75,7 @@
         /// <param name="ComponentId">The component identifier.</param>
         public ComponentResponse GetComponent(int ComponentId)
         {
-            return this.Get<ComponentResponse>("components/{componentId}", "componentId", ComponentId.ToString());
+            return this.Get<ComponentResponse>($"components/{ComponentId}");
         }
 
         /// <summary>
@@ -84,7 +84,7 @@
         /// <param name="ComponentId">The component identifier.</param>s
         public async Task<ComponentResponse> GetComponentAsync(int ComponentId)
         {
-            return await this.GetAsync<ComponentResponse>("components/{componentId}", "componentId", ComponentId.ToString());
+            return await this.GetAsync<ComponentResponse>($"components/{ComponentId}");
         }
 
         /// <summary>
@@ -109,7 +109,7 @@
         /// <param name="ComponentGroupId">The component group identifier.</param>
         public ComponentGroupsResponse GetComponentGroups(int ComponentGroupId)
         {
-            return this.Get<ComponentGroupsResponse>("components/groups/{componentGroupId}", "componentGroupId", ComponentGroupId.ToString());
+            return this.Get<ComponentGroupsResponse>($"components/groups/{ComponentGroupId}");
         }
 
         /// <summary>
@@ -118,7 +118,7 @@
         /// <param name="ComponentGroupId">The component group identifier.</param>
         public async Task<ComponentGroupsResponse> GetComponentGroupsAsync(int ComponentGroupId)
         {
-            return await this.GetAsync<ComponentGroupsResponse>("components/groups/{componentGroupId}", "componentGroupId", ComponentGroupId.ToString());
+            return await this.GetAsync<ComponentGroupsResponse>($"components/groups/{ComponentGroupId}");
         }
 
         /// <summary>
@@ -143,16 +143,84 @@
         /// <param name="IncidentId">The incident identifier.</param>
         public IncidentResponse GetIncident(int IncidentId)
         {
-            return this.Get<IncidentResponse>("incidents/{incidentId}", "incidentId", IncidentId.ToString());
+            return this.Get<IncidentResponse>($"incidents/{IncidentId}");
         }
 
         /// <summary>
-        /// Gets the specified Incident of the Cachet API.
+        /// Gets the specified incident from the Cachet API.
         /// </summary>
-        /// <param name="IncidentId">The Incident identifier.</param>s
+        /// <param name="IncidentId">The incident identifier.</param>
         public async Task<IncidentResponse> GetIncidentAsync(int IncidentId)
         {
-            return await this.GetAsync<IncidentResponse>("incidents/{incidentId}", "incidentId", IncidentId.ToString());
+            return await this.GetAsync<IncidentResponse>($"incidents/{IncidentId}");
+        }
+
+        /// <summary>
+        /// Gets the metrics from the Cachet API.
+        /// </summary>
+        public MetricsResponse GetMetrics()
+        {
+            return this.Get<MetricsResponse>("metrics");
+        }
+
+        /// <summary>
+        /// Gets the metrics from the Cachet API.
+        /// </summary>
+        public async Task<MetricsResponse> GetMetricAsync()
+        {
+            return await this.GetAsync<MetricsResponse>("metrics");
+        }
+
+        /// <summary>
+        /// Gets the specified metric from the Cachet API.
+        /// </summary>
+        /// <param name="MetricId">The metric identifier.</param>
+        public MetricResponse GetMetric(int MetricId)
+        {
+            return this.Get<MetricResponse>($"metrics/{MetricId}");
+        }
+
+        /// <summary>
+        /// Gets the specified metric from the Cachet API.
+        /// </summary>
+        /// <param name="MetricId">The metric identifier.</param>
+        public async Task<MetricResponse> GetMetricAsync(int MetricId)
+        {
+            return await this.GetAsync<MetricResponse>($"metrics/{MetricId}");
+        }
+
+        /// <summary>
+        /// Gets the specified metric's points from the Cachet API.
+        /// </summary>
+        /// <param name="MetricId">The metric identifier.</param>
+        public MetricPointsResponse GetMetricPoints(int MetricId)
+        {
+            return this.Get<MetricPointsResponse>($"metrics/{MetricId}/points");
+        }
+
+        /// <summary>
+        /// Gets the specified metric's points from the Cachet API.
+        /// </summary>
+        /// <param name="MetricId">The metric identifier.</param>
+        public async Task<MetricPointsResponse> GetMetricPointsAsync(int MetricId)
+        {
+            return await this.GetAsync<MetricPointsResponse>($"metrics/{MetricId}/points");
+        }
+
+        /// <summary>
+        /// Gets the subscribers from the Cachet API.
+        /// </summary>
+        public SubscribersResponse GetSubscribers()
+        {
+            return this.Get<SubscribersResponse>("subscribers");
+        }
+
+        /// <summary>
+        /// Gets the subscribers from the Cachet API.
+        /// </summary>
+        public async Task<SubscribersResponse> GetSubscribersAsync()
+        {
+            return await this.GetAsync<SubscribersResponse>("subscribers");
         }
     }
 }

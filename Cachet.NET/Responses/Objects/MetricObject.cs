@@ -2,21 +2,9 @@
 {
     using System;
 
-    using global::Cachet.NET.Responses.Enums;
-
-    using RestSharp.Deserializers;
-
-    public class IncidentObject
+    public class MetricObject
     {
-        [DeserializeAs(Name = "id")]
-        public int Identifier
-        {
-            get;
-            set;
-        }
-
-        [DeserializeAs(Name = "component_id")]
-        public int ComponentId
+        public int Id
         {
             get;
             set;
@@ -28,24 +16,31 @@
             set;
         }
 
-        public IncidentStatus Status
-        {
-            get;
-            set;
-        }
-        public bool Visible
+        public string Suffix
         {
             get;
             set;
         }
 
-        public string Message
+        public string Description
         {
             get;
             set;
         }
 
-        public DateTime? ScheduledAt
+        public int DefaultValue
+        {
+            get;
+            set;
+        }
+
+        public int CalcType
+        {
+            get;
+            set;
+        }
+
+        public bool DisplayChart
         {
             get;
             set;
@@ -63,18 +58,34 @@
             set;
         }
 
-        public DateTime? DeletedAt
+        public int Places
         {
             get;
             set;
         }
 
-        [DeserializeAs(Name = "human-status")]
-        public string StatusName
+        public int DefaultView
         {
             get;
             set;
         }
-        
+
+        public int Threshold
+        {
+            get;
+            set;
+        }
+
+        public int Order
+        {
+            get;
+            set;
+        }
+
+        public string DefaultViewName
+        {
+            get;
+            set;
+        }
     }
 }
