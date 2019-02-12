@@ -2,64 +2,108 @@
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
 
-    internal class Program
+    internal static class Program
     {
         /// <summary>
         /// Defines the entry point of the application.
         /// </summary>
-        internal static void Main()
+        private static async Task Main()
         {
-            var Cachet = new Cachet("https://demo.cachethq.io/api/v1/", "");
-
-            Console.WriteLine("Ping : " + Cachet.Ping() + ".");
-
-            var Version = Cachet.GetVersion();
-
-            Console.WriteLine("Version : " + Version.Meta.Latest.TagName);
-
-            var Compo = Cachet.GetComponents();
-
-            Console.WriteLine("Components : ");
-
-            foreach (var Component in Compo.Components)
+            using (var Cachet = new Cachet("https://demo.cachethq.io/api/v1/", ""))
             {
-                Console.WriteLine(" - " + Component.Name);
-
-                if (Component.Tags.Count == 1)
+                Cachet.OnDisposed += (Sender, Args) =>
                 {
-                    Console.WriteLine(" -- Tags : " + Component.Tags.First());
+                    Console.WriteLine("[*] The Cachet API client has been disposed.");
+                };
+
+                var IsPingValid = await Cachet.PingAsync();
+
+                if (IsPingValid)
+                {
+                    var Version         = await Cachet.GetVersionAsync();
+                    var Components      = await Cachet.GetComponentsAsync();
+                    var ComponentGroups = await Cachet.GetComponentGroupsAsync();
+                    var Incidents       = await Cachet.GetIncidentsAsync();
+
+                    if (Version != null)
+                    {
+                        Console.WriteLine("[*] Version : " + Version.Meta.Latest.TagName + " [IsLatest : " + (Version.Meta.OnLatest ? "Yes" : "No") + "]");
+                    }
+                    else
+                    {
+                        Console.WriteLine("[*] Version : " + "(NULL)");
+                    }
+
+                    Console.WriteLine();
+
+                    if (Components != null)
+                    {
+                        Console.WriteLine("[*] Components : ");
+
+                        foreach (var Component in Components.Components)
+                        {
+                            Console.WriteLine("[*]  - " + Component.Name);
+
+                            if (Component.Tags.Count == 1)
+                            {
+                                Console.WriteLine("[*]  -- Tags : " + Component.Tags.First());
+                            }
+                            else
+                            {
+                                Console.WriteLine("[*]  -- Tags : ");
+
+                                foreach (var Tag in Component.Tags)
+                                {
+                                    Console.WriteLine("[*]  --- " + Tag + ".");
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("[*] Components : (NULL)");
+                    }
+
+                    Console.WriteLine();
+
+                    if (ComponentGroups != null)
+                    {
+                        Console.WriteLine("[*] Groups : ");
+
+                        foreach (var Group in ComponentGroups.Groups)
+                        {
+                            Console.WriteLine("[*]  - " + Group.Name);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("[*] Groups : (NULL)");
+                    }
+
+                    Console.WriteLine();
+
+                    if (Incidents != null)
+                    {
+                        Console.WriteLine("[*] Incidents : ");
+
+                        foreach (var Incident in Incidents.Incidents)
+                        {
+                            Console.WriteLine("[*]  - " + Incident.Name);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("[*] Incidents : (NULL)");
+                    }
+
+                    Console.WriteLine();
                 }
                 else
                 {
-                    Console.WriteLine(" -- Tags : ");
-
-                    foreach (var Tag in Component.Tags)
-                    {
-                        Console.WriteLine(" --- " + Tag + ".");
-                    }
+                    Console.WriteLine("[*] Failed to ping the Cachet API !");
                 }
-
-                Console.WriteLine();
-            }
-
-            var CompoGr = Cachet.GetComponentGroups();
-
-            Console.WriteLine("Groups : ");
-
-            foreach (var Group in CompoGr.Groups)
-            {
-                Console.WriteLine(" - " + Group.Name);
-            }
-            Console.WriteLine();
-
-            var incidents = Cachet.GetIncidents();
-
-            Console.WriteLine("Incidents : ");
-
-            foreach (var incident in incidents.Incidents)
-            {
-                Console.WriteLine(" - " + incident.Name);
             }
 
             Console.ReadKey(false);

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/BerkanYildiz/Cachet.NET/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/BerkanYildiz/Cachet.NET/</projectUrl>
+    <iconUrl>https://img.icons8.com/color/48/000000/internet-hub.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2019</copyright>
+    <tags>Cachet HQ library server servers status downtime maintenance CachetHQ api client rest</tags>
+  </metadata>
+</package>

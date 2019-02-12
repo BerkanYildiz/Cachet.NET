@@ -1,41 +1,72 @@
 ﻿namespace Cachet.NET
 {
+    using System;
+    using System.Threading;
     using System.Threading.Tasks;
-
-    using global::Cachet.NET.Responses;
 
     using RestSharp;
     using RestSharp.Authenticators;
 
-    public class Cachet
+    public partial class Cachet : IDisposable
     {
         /// <summary>
-        /// Gets a value indicating whether this instance is filled.
+        /// Gets or sets the restsharp client.
         /// </summary>
-        private bool Initialized
+        private RestClient Rest
         {
             get;
         }
 
-        private readonly string Hostname;
-        private readonly string ApiKey;
+        /// <summary>
+        /// Gets a value indicating whether this instance is filled.
+        /// </summary>
+        public bool IsInitialized
+        {
+            get;
+            private set;
+        }
 
-        private RestClient Rest;
+        /// <summary>
+        /// Gets a value indicating whether this instance is disposed.
+        /// </summary>
+        public bool IsDisposed
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Removes or adds an event fired when this instance has been disposed (AFTER being disposed).
+        /// </summary>
+        public EventHandler OnDisposed
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Prevents a default instance of the <see cref="Cachet"/> class from being created.
+        /// </summary>
+        private Cachet()
+        {
+            // Cachet
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Cachet"/> class.
         /// </summary>
         /// <param name="Host">The host.</param>
         /// <param name="ApiKey">The API key.</param>
-        public Cachet(string Host, string ApiKey)
+        public Cachet(string Host, string ApiKey = "")
         {
-            this.Hostname       = Host;
-            this.ApiKey         = ApiKey;
+            this.Rest = new RestClient(Host);
 
-            this.Rest           = new RestClient(Host);
-            this.Rest.AddDefaultHeader("X-Cachet-Token", ApiKey);
-
-            this.Initialized    = true;
+            if (!string.IsNullOrEmpty(ApiKey))
+            {
+                this.Rest.AddDefaultHeader("X-Cachet-Token", ApiKey);
+            }
+            
+            this.IsInitialized = true;
         }
 
         /// <summary>
@@ -46,438 +77,168 @@
         /// <param name="Password">The password.</param>
         public Cachet(string Host, string Email, string Password)
         {
-            this.Hostname       = Host;
-            this.ApiKey         = ApiKey;
-
-            this.Rest           = new RestClient(Host)
-            {
-                Authenticator   = new HttpBasicAuthenticator(Email, Password)
-            };
-
-            this.Initialized    = true;
+            this.Rest = new RestClient(Host);
+            this.Rest.Authenticator = new HttpBasicAuthenticator(Email, Password);
+            this.IsInitialized = true;
         }
 
         /// <summary>
-        /// Pings the Cachet API.
+        /// Gets data from the specified endpoint.
         /// </summary>
-        public bool Ping()
+        /// <param name="Uri">The URI.</param>
+        /// <param name="Parameters">The query parameters.</param>
+        private T Get<T>(string Uri, params string[] Parameters) where T : class, new()
         {
-            if (this.Initialized == false)
+            var Request = new RestRequest(Uri, Method.GET);
+
+            if (Parameters != null && Parameters.Length >= 2)
             {
-                return false;
-            }
-
-            var Request  = new RestRequest("ping");
-            var Response = this.Rest.Get<PingResponse>(Request);
-
-            if (Response.ResponseStatus == ResponseStatus.Completed)
-            {
-                var PingResponse = Response.Data;
-
-                if (PingResponse.IsValid)
+                if (Parameters.Length % 2 != 0)
                 {
-                    return true;
+                    throw new ArgumentException("Length is not a multiple of 2 (Key, Value)", nameof(Parameters));
+                }
+
+                for (int I = 0; I < Parameters.Length; I += 2)
+                {
+                    Request.AddUrlSegment(Parameters[I], Parameters[I + 1]);
                 }
             }
 
-            return false;
-        }
-        
-        /// <summary>
-        /// Pings the Cachet API.
-        /// </summary>
-        public async Task<bool> PingAsync()
-        {
-            if (this.Initialized == false)
-            {
-                return false;
-            }
+            var Response = this.Rest.Get<T>(Request);
 
-            var Request  = new RestRequest("ping");
-            var Response = await this.Rest.ExecuteGetTaskAsync<PingResponse>(Request);
+            #if DEBUG
+
+            Log.Warning(typeof(Cachet), "Response : ");
+            Log.Warning(typeof(Cachet), " - Content : " + Response.Content);
+            Log.Warning(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
+            Log.Warning(typeof(Cachet), " - Code    : " + Response.StatusCode);
+            Log.Warning(typeof(Cachet), " - ------- : " + "----------------------");
+
+            #endif
 
             if (Response.ResponseStatus == ResponseStatus.Completed)
             {
-                var PingResponse = Response.Data;
-
-                if (PingResponse.IsValid)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Gets the version of the Cachet API.
-        /// </summary>
-        public VersionResponse GetVersion()
-        {
-            if (this.Initialized == false)
-            {
-                return null;
-            }
-
-            var Request  = new RestRequest("version");
-            var Response = this.Rest.Get<VersionResponse>(Request);
-
-            if (Response.ResponseStatus == ResponseStatus.Completed)
-            {
-                var VersionResponse = Response.Data;
-
-                if (VersionResponse != null)
-                {
-                    return VersionResponse;
-                }
+                return Response.Data;
             }
 
             return null;
         }
 
         /// <summary>
-        /// Gets the version of the Cachet API.
+        /// Gets data from the specified endpoint asynchronously.
         /// </summary>
-        public async Task<VersionResponse> GetVersionAsync()
+        /// <param name="Uri">The URI.</param>
+        /// <param name="Parameters">The query parameters.</param>
+        private async Task<T> GetAsync<T>(string Uri, params string[] Parameters) where T : class, new()
         {
-            if (this.Initialized == false)
+            var Request = new RestRequest(Uri);
+
+            if (Parameters != null && Parameters.Length >= 2)
             {
-                return null;
+                if (Parameters.Length % 2 != 0)
+                {
+                    throw new ArgumentException("Length is not a multiple of 2 (Key, Value)", nameof(Parameters));
+                }
+
+                for (int I = 0; I < Parameters.Length; I += 2)
+                {
+                    Request.AddUrlSegment(Parameters[I], Parameters[I + 1]);
+                }
             }
 
-            var Request  = new RestRequest("version");
-            var Response = await this.Rest.ExecuteGetTaskAsync<VersionResponse>(Request);
+            var Response = await this.Rest.ExecuteGetTaskAsync<T>(Request);
+
+            #if DEBUG
+
+            Log.Warning(typeof(Cachet), "Response : ");
+            Log.Warning(typeof(Cachet), " - Content : " + Response.Content);
+            Log.Warning(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
+            Log.Warning(typeof(Cachet), " - Code    : " + Response.StatusCode);
+            Log.Warning(typeof(Cachet), " - ------- : " + "----------------------");
+
+            #endif
 
             if (Response.ResponseStatus == ResponseStatus.Completed)
             {
-                var VersionResponse = Response.Data;
-
-                if (VersionResponse != null)
-                {
-                    return VersionResponse;
-                }
+                return Response.Data;
             }
 
             return null;
         }
 
         /// <summary>
-        /// Gets the components of the Cachet API.
+        /// Gets data from the specified endpoint asynchronously.
         /// </summary>
-        public ComponentsResponse GetComponents()
+        /// <param name="Uri">The URI.</param>
+        /// <param name="Token">The cancellation token.</param>
+        /// <param name="Parameters">The query parameters.</param>
+        private async Task<T> GetAsync<T>(string Uri, CancellationToken Token, params string[] Parameters) where T : class, new()
         {
-            if (this.Initialized == false)
+            var Request = new RestRequest(Uri);
+
+            if (Parameters != null && Parameters.Length >= 2)
             {
-                return null;
+                if (Parameters.Length % 2 != 0)
+                {
+                    throw new ArgumentException("Length is not a multiple of 2 (Key, Value)", nameof(Parameters));
+                }
+
+                for (int I = 0; I < Parameters.Length; I += 2)
+                {
+                    Request.AddUrlSegment(Parameters[I], Parameters[I + 1]);
+                }
             }
 
-            var Request  = new RestRequest("components");
-            var Response = this.Rest.Get<ComponentsResponse>(Request);
+            var Response = await this.Rest.ExecuteGetTaskAsync<T>(Request, Token);
+
+            #if DEBUG
+
+            Log.Warning(typeof(Cachet), "Response : ");
+            Log.Warning(typeof(Cachet), " - Content : " + Response.Content);
+            Log.Warning(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
+            Log.Warning(typeof(Cachet), " - Code    : " + Response.StatusCode);
+            Log.Warning(typeof(Cachet), " - ------- : " + "----------------------");
+
+            #endif
 
             if (Response.ResponseStatus == ResponseStatus.Completed)
             {
-                var ComponentsResponse = Response.Data;
-
-                if (ComponentsResponse != null)
-                {
-                    return ComponentsResponse;
-                }
+                return Response.Data;
             }
 
             return null;
         }
 
         /// <summary>
-        /// Gets the components of the Cachet API.
+        /// Exécute les tâches définies par l'application associées à la
+        /// libération ou à la redéfinition des ressources non managées.
         /// </summary>
-        public async Task<ComponentsResponse> GetComponentsAsync()
+        public void Dispose()
         {
-            if (this.Initialized == false)
+            if (this.IsDisposed)
             {
-                return null;
+                return;
             }
 
-            var Request  = new RestRequest("components");
-            var Response = await this.Rest.ExecuteGetTaskAsync<ComponentsResponse>(Request);
+            this.IsDisposed = true;
 
-            if (Response.ResponseStatus == ResponseStatus.Completed)
+            // ..
+
+            // Dispose the used instances..
+
+            // ..
+
+            if (this.OnDisposed != null)
             {
-                var ComponentsResponse = Response.Data;
-
-                if (ComponentsResponse != null)
+                try
                 {
-                    return ComponentsResponse;
+                    this.OnDisposed.Invoke(this, EventArgs.Empty);
+                }
+                catch (Exception)
+                {
+                    // ..
                 }
             }
-
-            return null;
         }
-
-        /// <summary>
-        /// Gets the specified component of the Cachet API.
-        /// </summary>
-        /// <param name="ComponentId">The component identifier.</param>
-        public ComponentResponse GetComponent(int ComponentId)
-        {
-            if (this.Initialized == false)
-            {
-                return null;
-            }
-
-            var Request  = new RestRequest("components/{componentId}").AddUrlSegment("componentId", ComponentId);
-            var Response = this.Rest.Get<ComponentResponse>(Request);
-
-            if (Response.ResponseStatus == ResponseStatus.Completed)
-            {
-                var ComponentResponse = Response.Data;
-
-                if (ComponentResponse != null)
-                {
-                    return ComponentResponse;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets the specified component of the Cachet API.
-        /// </summary>
-        /// <param name="ComponentId">The component identifier.</param>s
-        public async Task<ComponentResponse> GetComponentAsync(int ComponentId)
-        {
-            if (this.Initialized == false)
-            {
-                return null;
-            }
-
-            var Request  = new RestRequest("components/{componentId}").AddUrlSegment("componentId", ComponentId);
-            var Response = await this.Rest.ExecuteGetTaskAsync<ComponentResponse>(Request);
-
-            if (Response.ResponseStatus == ResponseStatus.Completed)
-            {
-                var ComponentResponse = Response.Data;
-
-                if (ComponentResponse != null)
-                {
-                    return ComponentResponse;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets the groups of components of the Cachet API.
-        /// </summary>
-        public ComponentGroupsResponse GetComponentGroups()
-        {
-            if (this.Initialized == false)
-            {
-                return null;
-            }
-
-            var Request  = new RestRequest("components/groups");
-            var Response = this.Rest.Get<ComponentGroupsResponse>(Request);
-
-            if (Response.ResponseStatus == ResponseStatus.Completed)
-            {
-                var ComponentGroupsResponse = Response.Data;
-
-                if (ComponentGroupsResponse != null)
-                {
-                    return ComponentGroupsResponse;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets the groups of components of the Cachet API.
-        /// </summary>
-        public async Task<ComponentGroupsResponse> GetComponentGroupsAsync()
-        {
-            if (this.Initialized == false)
-            {
-                return null;
-            }
-
-            var Request  = new RestRequest("components/groups");
-            var Response = await this.Rest.ExecuteGetTaskAsync<ComponentGroupsResponse>(Request);
-
-            if (Response.ResponseStatus == ResponseStatus.Completed)
-            {
-                var ComponentGroupsResponse = Response.Data;
-
-                if (ComponentGroupsResponse != null)
-                {
-                    return ComponentGroupsResponse;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets the specified group of components of the Cachet API.
-        /// </summary>
-        /// <param name="ComponentGroupId">The component group identifier.</param>
-        public ComponentGroupsResponse GetComponentGroups(int ComponentGroupId)
-        {
-            if (this.Initialized == false)
-            {
-                return null;
-            }
-
-            var Request  = new RestRequest("components/groups/{componentGroupId}").AddUrlSegment("componentGroupId", ComponentGroupId);
-            var Response = this.Rest.Get<ComponentGroupsResponse>(Request);
-
-            if (Response.ResponseStatus == ResponseStatus.Completed)
-            {
-                var ComponentGroupsResponse = Response.Data;
-
-                if (ComponentGroupsResponse != null)
-                {
-                    return ComponentGroupsResponse;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets the specified group of components of the Cachet API.
-        /// </summary>
-        /// <param name="ComponentGroupId">The component group identifier.</param>
-        public async Task<ComponentGroupsResponse> GetComponentGroupsAsync(int ComponentGroupId)
-        {
-            if (this.Initialized == false)
-            {
-                return null;
-            }
-
-            var Request  = new RestRequest("components/groups/{componentGroupId}").AddUrlSegment("componentGroupId", ComponentGroupId);
-            var Response = this.Rest.Get<ComponentGroupsResponse>(Request);
-
-            if (Response.ResponseStatus == ResponseStatus.Completed)
-            {
-                var ComponentGroupsResponse = Response.Data;
-
-                if (ComponentGroupsResponse != null)
-                {
-                    return ComponentGroupsResponse;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets a list of incidents from the Cachet API.
-        /// </summary>
-        public IncidentsResponse GetIncidents()
-        {
-            if (this.Initialized == false)
-            {
-                return null;
-            }
-
-            var Request = new RestRequest("incidents");
-            var Response = this.Rest.Get<IncidentsResponse>(Request);
-
-            if (Response.ResponseStatus == ResponseStatus.Completed)
-            {
-                var incidentsResponse = Response.Data;
-
-                if (incidentsResponse != null)
-                {
-                    return incidentsResponse;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets the Incidents of the Cachet API.
-        /// </summary>
-        public async Task<IncidentsResponse> GetIncidentsAsync()
-        {
-            if (this.Initialized == false)
-            {
-                return null;
-            }
-
-            var Request = new RestRequest("incidents");
-            var Response = await this.Rest.ExecuteGetTaskAsync<IncidentsResponse>(Request);
-
-            if (Response.ResponseStatus == ResponseStatus.Completed)
-            {
-                var incidentsResponse = Response.Data;
-
-                if (incidentsResponse != null)
-                {
-                    return incidentsResponse;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets the specified Incident of the Cachet API.
-        /// </summary>
-        /// <param name="IncidentId">The Incident identifier.</param>
-        public IncidentResponse GetIncident(int IncidentId)
-        {
-            if (this.Initialized == false)
-            {
-                return null;
-            }
-
-            var Request = new RestRequest("incidents/{incidentId}").AddUrlSegment("incidentId", IncidentId);
-            var Response = this.Rest.Get<IncidentResponse>(Request);
-
-            if (Response.ResponseStatus == ResponseStatus.Completed)
-            {
-                var IncidentResponse = Response.Data;
-
-                if (IncidentResponse != null)
-                {
-                    return IncidentResponse;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets the specified Incident of the Cachet API.
-        /// </summary>
-        /// <param name="IncidentId">The Incident identifier.</param>s
-        public async Task<IncidentResponse> GetIncidentAsync(int IncidentId)
-        {
-            if (this.Initialized == false)
-            {
-                return null;
-            }
-
-            var Request = new RestRequest("incidents/{incidentId}").AddUrlSegment("incidentId", IncidentId);
-            var Response = await this.Rest.ExecuteGetTaskAsync<IncidentResponse>(Request);
-
-            if (Response.ResponseStatus == ResponseStatus.Completed)
-            {
-                var IncidentResponse = Response.Data;
-
-                if (IncidentResponse != null)
-                {
-                    return IncidentResponse;
-                }
-            }
-
-            return null;
-        }
-
     }
 }
