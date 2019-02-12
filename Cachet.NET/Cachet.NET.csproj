@@ -43,10 +43,15 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CachetRequests.cs" />
     <Compile Include="Cachet.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Requests\Cachet.Ping.cs" />
+    <Compile Include="Requests\Cachet.Version.cs" />
+    <Compile Include="Requests\Cachet.Subscribers.cs" />
+    <Compile Include="Requests\Cachet.Incidents.cs" />
+    <Compile Include="Requests\Cachet.Components.cs" />
+    <Compile Include="Requests\Cachet.Metrics.cs" />
     <Compile Include="Responses\ComponentResponse.cs" />
     <Compile Include="Responses\ComponentGroupsResponse.cs" />
     <Compile Include="Responses\Metas\Links.cs" />

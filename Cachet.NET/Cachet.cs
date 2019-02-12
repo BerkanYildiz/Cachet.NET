@@ -84,11 +84,11 @@
 
             #if DEBUG
 
-            Log.Warning(typeof(Cachet), "Response : ");
-            Log.Warning(typeof(Cachet), " - Content : " + Response.Content);
-            Log.Warning(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
-            Log.Warning(typeof(Cachet), " - Code    : " + Response.StatusCode);
-            Log.Warning(typeof(Cachet), " - ------- : " + "----------------------");
+            Log.Info(typeof(Cachet), "Response : ");
+            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
+            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
+            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
+            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
 
             #endif
 
@@ -111,11 +111,11 @@
 
             #if DEBUG
 
-            Log.Warning(typeof(Cachet), "Response : ");
-            Log.Warning(typeof(Cachet), " - Content : " + Response.Content);
-            Log.Warning(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
-            Log.Warning(typeof(Cachet), " - Code    : " + Response.StatusCode);
-            Log.Warning(typeof(Cachet), " - ------- : " + "----------------------");
+            Log.Info(typeof(Cachet), "Response : ");
+            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
+            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
+            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
+            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
 
             #endif
 
@@ -139,11 +139,11 @@
 
             #if DEBUG
 
-            Log.Warning(typeof(Cachet), "Response : ");
-            Log.Warning(typeof(Cachet), " - Content : " + Response.Content);
-            Log.Warning(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
-            Log.Warning(typeof(Cachet), " - Code    : " + Response.StatusCode);
-            Log.Warning(typeof(Cachet), " - ------- : " + "----------------------");
+            Log.Info(typeof(Cachet), "Response : ");
+            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
+            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
+            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
+            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
 
             #endif
 
