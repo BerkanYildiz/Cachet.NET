@@ -1,7 +1,11 @@
 # Cachet.NET
 C# client library for the open-source Cachet status page system.
 
-# Example
+## Installation
+
+    PM> Install-Package Cachet.NET-official
+
+## Example
 
 ```csharp
 using Cachet.NET;
