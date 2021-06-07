@@ -6,7 +6,7 @@
     using global::Cachet.NET.Responses;
     using global::Cachet.NET.Responses.Objects;
 
-    public partial class Cachet : IDisposable
+    public partial class Cachet
     {
         /// <summary>
         /// Gets the metrics from the Cachet API.
@@ -19,7 +19,7 @@
         /// <summary>
         /// Gets the metrics from the Cachet API.
         /// </summary>
-        public async Task<MetricsResponse> GetMetricAsync()
+        public async Task<MetricsResponse> GetMetricsAsync()
         {
             return await this.GetAsync<MetricsResponse>("metrics");
         }

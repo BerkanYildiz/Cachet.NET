@@ -1,14 +1,12 @@
 ﻿namespace Cachet.NET
 {
-    using System;
-    using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
 
     using RestSharp;
     using RestSharp.Authenticators;
 
-    public partial class Cachet : IDisposable
+    public partial class Cachet
     {
         /// <summary>
         /// Gets or sets the restsharp client.
@@ -19,29 +17,11 @@
         }
 
         /// <summary>
-        /// Removes or adds an event fired when this instance has been disposed (AFTER being disposed).
-        /// </summary>
-        public EventHandler OnDisposed
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is disposed.
-        /// </summary>
-        public bool IsDisposed
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// Prevents a default instance of the <see cref="Cachet"/> class from being created.
         /// </summary>
         private Cachet()
         {
-            // Cachet
+            // ...
         }
 
         /// <summary>
@@ -83,16 +63,6 @@
             var Request = new RestRequest(Uri, Method.GET);
             var Response = this.Rest.Execute<T>(Request);
 
-            #if DEBUG
-
-            Log.Info(typeof(Cachet), "Response : ");
-            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
-            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
-            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
-            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
-
-            #endif
-
             if (Response.ResponseStatus == ResponseStatus.Completed)
             {
                 return Response.Data;
@@ -117,16 +87,6 @@
 
             var Response = this.Rest.Execute<T>(Request);
 
-            #if DEBUG
-
-            Log.Info(typeof(Cachet), "Response : ");
-            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
-            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
-            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
-            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
-
-            #endif
-
             if (Response.ResponseStatus == ResponseStatus.Completed)
             {
                 return Response.Data;
@@ -144,16 +104,6 @@
             var Request = new RestRequest(Uri, Method.DELETE);
             var Response = this.Rest.Execute(Request);
 
-            #if DEBUG
-
-            Log.Info(typeof(Cachet), "Response : ");
-            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
-            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
-            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
-            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
-
-            #endif
-
             if (Response.ResponseStatus == ResponseStatus.Completed)
             {
                 return Response.IsSuccessful;
@@ -169,17 +119,7 @@
         private async Task<T> GetAsync<T>(string Uri) where T : class, new()
         {
             var Request = new RestRequest(Uri, Method.GET);
-            var Response = await this.Rest.ExecuteTaskAsync<T>(Request);
-
-            #if DEBUG
-
-            Log.Info(typeof(Cachet), "Response : ");
-            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
-            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
-            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
-            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
-
-            #endif
+            var Response = await this.Rest.ExecuteAsync<T>(Request);
 
             if (Response.ResponseStatus == ResponseStatus.Completed)
             {
@@ -203,17 +143,7 @@
                 Request.AddJsonBody((object) Body);
             }
 
-            var Response = await this.Rest.ExecuteTaskAsync<T>(Request);
-
-            #if DEBUG
-
-            Log.Info(typeof(Cachet), "Response : ");
-            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
-            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
-            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
-            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
-
-            #endif
+            var Response = await this.Rest.ExecuteAsync<T>(Request);
 
             if (Response.ResponseStatus == ResponseStatus.Completed)
             {
@@ -229,20 +159,8 @@
         /// <param name="Uri">The URI.</param>
         private async Task<bool> DeleteAsync(string Uri)
         {
-            Log.Info(typeof(Cachet), "DeleteAsync()");
-
             var Request = new RestRequest(Uri, Method.DELETE);
-            var Response = await this.Rest.ExecuteTaskAsync(Request);
-
-            #if DEBUG
-
-            Log.Info(typeof(Cachet), "Response : ");
-            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
-            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
-            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
-            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
-
-            #endif
+            var Response = await this.Rest.ExecuteAsync(Request);
 
             if (Response.ResponseStatus == ResponseStatus.Completed)
             {
@@ -260,17 +178,7 @@
         private async Task<T> GetAsync<T>(string Uri, CancellationToken Token) where T : class, new()
         {
             var Request = new RestRequest(Uri, Method.GET);
-            var Response = await this.Rest.ExecuteTaskAsync<T>(Request, Token);
-
-            #if DEBUG
-
-            Log.Info(typeof(Cachet), "Response : ");
-            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
-            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
-            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
-            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
-
-            #endif
+            var Response = await this.Rest.ExecuteAsync<T>(Request, Token);
 
             if (Response.ResponseStatus == ResponseStatus.Completed)
             {
@@ -295,17 +203,7 @@
                 Request.AddJsonBody((object)Body);
             }
 
-            var Response = await this.Rest.ExecuteTaskAsync<T>(Request, Token);
-
-            #if DEBUG
-
-            Log.Info(typeof(Cachet), "Response : ");
-            Log.Info(typeof(Cachet), " - Content : " + Response.Content);
-            Log.Info(typeof(Cachet), " - Status  : " + Response.ResponseStatus);
-            Log.Info(typeof(Cachet), " - Code    : " + Response.StatusCode);
-            Log.Info(typeof(Cachet), " - ------- : " + "----------------------");
-
-            #endif
+            var Response = await this.Rest.ExecuteAsync<T>(Request, Token);
 
             if (Response.ResponseStatus == ResponseStatus.Completed)
             {
@@ -313,38 +211,6 @@
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Exécute les tâches définies par l'application associées à la
-        /// libération ou à la redéfinition des ressources non managées.
-        /// </summary>
-        public void Dispose()
-        {
-            if (this.IsDisposed)
-            {
-                return;
-            }
-
-            this.IsDisposed = true;
-
-            // ..
-
-            // Dispose the used instances..
-
-            // ..
-
-            if (this.OnDisposed != null)
-            {
-                try
-                {
-                    this.OnDisposed.Invoke(this, EventArgs.Empty);
-                }
-                catch (Exception)
-                {
-                    // ..
-                }
-            }
         }
     }
 }

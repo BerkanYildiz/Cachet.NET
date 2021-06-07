@@ -1,11 +1,10 @@
 ﻿namespace Cachet.NET
 {
-    using System;
     using System.Threading.Tasks;
 
     using global::Cachet.NET.Responses;
 
-    public partial class Cachet : IDisposable
+    public partial class Cachet
     {
         /// <summary>
         /// Pings the Cachet API.

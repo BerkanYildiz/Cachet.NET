@@ -1,1 +1,0 @@
-for /d /r . %%d in (Builds,bin,obj,debug,release,x64,x86,Dante) do @if exist "%%d" rd /s/q "%%d"

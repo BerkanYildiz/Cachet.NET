@@ -1,11 +1,10 @@
 ﻿namespace Cachet.NET
 {
-    using System;
     using System.Threading.Tasks;
 
     using global::Cachet.NET.Responses;
 
-    public partial class Cachet : IDisposable
+    public partial class Cachet
     {
         /// <summary>
         /// Gets the subscribers from the Cachet API.
